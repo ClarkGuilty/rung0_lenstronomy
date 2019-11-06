@@ -223,7 +223,7 @@ fitting_kwargs_list = [['update_settings', {'lens_add_fixed': [[0, ['gamma'], [2
       ['PSO', {'sigma_scale': 1., 'n_particles': 200, 'n_iterations': 200, 'threadCount' : 1}],
       ['update_settings', {'lens_remove_fixed': [[0, ['gamma']]]}],
       ['PSO', {'sigma_scale': 0.1, 'n_particles': 200, 'n_iterations': 200, 'threadCount' : 1}],
-                       ['MCMC', {'n_burn': 50, 'n_run': 50, 'walkerRatio': 2, 'sigma_scale': .01}]
+                       ['MCMC', {'n_burn': 50, 'n_run': 5000, 'walkerRatio': 2, 'sigma_scale': .01}]
         ]
 
 chain_list = fitting_seq.fit_sequence(fitting_kwargs_list)
@@ -266,6 +266,7 @@ modelPlot.magnification_plot(ax=axes[1, 2])
 #f.tight_layout()
 #f.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0., hspace=0.05)
 #plt.show()
+f.savefig('lens_model.png', dpi = 600)
 
 f, axes = plt.subplots(2, 3, figsize=(16, 8), sharex=False, sharey=False)
 
@@ -277,7 +278,7 @@ modelPlot.decomposition_plot(ax=axes[0,2], text='All components', source_add=Tru
 modelPlot.decomposition_plot(ax=axes[1,2], text='All components convolved', source_add=True, lens_light_add=True, point_source_add=True)
 f.tight_layout()
 f.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0., hspace=0.05)
-plt.show()
+f.savefig('lens_results.png', dpi = 600)
 print(kwargs_result)
 
 
