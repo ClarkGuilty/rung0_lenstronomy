@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Wed Nov  6 12:55:47 2019
+
+@author: Javier Alejandro Acevedo Barroso
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Nov  5 16:34:17 2019
 
 @author: Javier Alejandro Acevedo Barroso
@@ -51,16 +61,27 @@ from lenstronomy.Cosmo.lens_cosmo import LensCosmo
 from astropy.cosmology import FlatLambdaCDM
 
 from astropy.io import fits
-
-from lenstronomy.Data.imaging_data import ImageData
-from lenstronomy.Data.psf import PSF
 import multiprocessing
 
+import pickle
+from cosmoHammer.util.MpiUtil import MpiPool
 
+from mpi4py import MPI
 
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
 
+pool = MpiPool(None)
+if pool.isMaster():
+    print("Parallel run")
+# hoffman2 specifics
+dir_path_cluster = './'
+path2load = "par.txt"
+path2dump = "par_out.txt"
 
-
+f = open(path2load, 'rb')
+input = pickle.load(f)
+f.close()
 
 #####data from the good teams file
 # Condiciones observacionales, estas librerias nos determinan condiciones para simulacion de imagenes
@@ -218,12 +239,13 @@ kwargs_params = {'lens_model': lens_params,
 from lenstronomy.Workflow.fitting_sequence import FittingSequence
 fitting_seq = FittingSequence(kwargs_data_joint, kwargs_model, kwargs_constraints, kwargs_likelihood, kwargs_params)
 
+
 fitting_kwargs_list = [['update_settings', {'lens_add_fixed': [[0, ['gamma'], [2.0]]],
                   'ps_add_fixed' : [[0,['ra_image', 'dec_image'], [x_image,y_image] ]] }],
-      ['PSO', {'sigma_scale': 1., 'n_particles': 200, 'n_iterations': 200, 'threadCount' : 1}],
+      ['PSO', {'sigma_scale': 1., 'n_particles': 200, 'n_iterations': 150, 'threadCount' : 2}],
       ['update_settings', {'lens_remove_fixed': [[0, ['gamma']]]}],
-      ['PSO', {'sigma_scale': 0.1, 'n_particles': 200, 'n_iterations': 200, 'threadCount' : 1}],
-                       ['MCMC', {'n_burn': 50, 'n_run': 500, 'walkerRatio': 2, 'sigma_scale': .01}]
+      ['PSO', {'sigma_scale': 0.1, 'n_particles': 200, 'n_iterations': 50, 'threadCount' : 1}],
+                       ['MCMC', {'n_burn': 50, 'n_run': 50, 'walkerRatio': 2, 'sigma_scale': .01}]
         ]
 
 chain_list = fitting_seq.fit_sequence(fitting_kwargs_list)
@@ -266,7 +288,6 @@ modelPlot.magnification_plot(ax=axes[1, 2])
 #f.tight_layout()
 #f.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0., hspace=0.05)
 #plt.show()
-f.savefig('lens_model.png', dpi = 600)
 
 f, axes = plt.subplots(2, 3, figsize=(16, 8), sharex=False, sharey=False)
 
@@ -278,32 +299,8 @@ modelPlot.decomposition_plot(ax=axes[0,2], text='All components', source_add=Tru
 modelPlot.decomposition_plot(ax=axes[1,2], text='All components convolved', source_add=True, lens_light_add=True, point_source_add=True)
 f.tight_layout()
 f.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0., hspace=0.05)
-f.savefig('lens_results.png', dpi = 600)
+plt.show()
 print(kwargs_result)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
