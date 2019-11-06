@@ -1,0 +1,7 @@
+Pixel size is 0.13'' and 0.08'' before and after drizzle
+Zeropoint of filter (AB system): 	25.9463
+Lens/Source redshift:	[0.51, 2.2]
+Measured velocity dispersion: 
+	258.791km/s, error level: 12.91km/s
+Time delay of B - A :
+	array([-21.212])days, error level: array([ 0.25])days
